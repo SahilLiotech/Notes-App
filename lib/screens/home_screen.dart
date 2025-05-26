@@ -19,6 +19,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final searchController = TextEditingController();
 
+  final List<String> categories = [
+    'Personal',
+    'Work',
+    'Ideas',
+    'To-Do',
+    'Other',
+  ];
+
   void _showOptionsMenu() {
     showModalBottomSheet(
       context: context,
@@ -104,46 +112,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.0),
                     ),
-                    child: IconButton(
+                    child: PopupMenuButton(
                       icon: const Icon(
                         Icons.filter_list,
                         color: Color(0xFF6C63FF),
                       ),
-                      onPressed: () {
-                        PopupMenuButton<int>(
-                          itemBuilder:
-                              (context) => [
-                                // PopupMenuItem 1
-                                PopupMenuItem(
-                                  value: 1,
-                                  // row with 2 children
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.star),
-                                      const SizedBox(width: 10),
-                                      const Text("Get The App"),
-                                    ],
-                                  ),
+
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            enabled: false,
+                            value: 'All',
+                            child: Text(
+                              'Filter By Categories',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          ...categories.map((category) {
+                            return PopupMenuItem(
+                              value: category,
+                              child: Text(
+                                category,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.black87,
                                 ),
-                                // PopupMenuItem 2
-                                PopupMenuItem(
-                                  value: 2,
-                                  // row with two children
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.chrome_reader_mode),
-                                      const SizedBox(width: 10),
-                                      const Text("About"),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                          offset: const Offset(0, 100),
-                          color: Colors.green,
-                          elevation: 2,
-                          // on selected we show the dialog box
-                          onSelected: (value) {},
-                        );
+                              ),
+                            );
+                          }),
+                        ];
+                      },
+                      onSelected: (value) {
+                        final selectedCategory = value;
+                        ref
+                            .read(notesProvider.notifier)
+                            .filterNotes(selectedCategory);
                       },
                     ),
                   ),
