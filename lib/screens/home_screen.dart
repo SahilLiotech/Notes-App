@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:notes_app/datasource/notes_model.dart';
 import 'package:notes_app/provider/notes_provider.dart';
 import 'package:notes_app/screens/add_notes_screen.dart';
 import '../widgets/option_bottom_sheet.dart';
@@ -27,7 +28,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     'Other',
   ];
 
-  void _showOptionsMenu() {
+  final List<String> sort = ['Old to New', 'New to Old'];
+
+  void _showOptionsMenu(NotesModel note) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -35,16 +38,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           (context) => OptionsBottomSheet(
             onShare: () {},
             onExport: () {},
-            onDelete: () {},
+            onDelete: () {
+              ref.read(notesProvider.notifier).deleteNote(note);
+            },
           ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("HomeScreen build");
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         title: Text(
           'Notes',
@@ -169,21 +172,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       color: Colors.black87,
                     ),
                   ),
-                  TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.sort,
-                      size: 18,
-                      color: Color(0xFF6C63FF),
-                    ),
-                    label: Text(
-                      'Sort',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: const Color(0xFF6C63FF),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                  PopupMenuButton(
+                    icon: const Icon(Icons.sort, color: Color(0xFF6C63FF)),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: 'Old to New',
+                          child: Text(
+                            'Old to New',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'New to Old',
+                          child: Text(
+                            'New to Old',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
+                    onSelected: (value) {
+                      ref.watch(notesProvider.notifier).sortNotesByDate(value);
+                    },
                   ),
                 ],
               ),
@@ -243,7 +260,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder:
-                                              (context) => AddNotesScreen(),
+                                              (context) =>
+                                                  AddNotesScreen(note: note),
                                         ),
                                       );
                                     },
@@ -295,7 +313,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                 ),
                                                 InkWell(
                                                   onTap:
-                                                      () => _showOptionsMenu(),
+                                                      () => _showOptionsMenu(
+                                                        note,
+                                                      ),
 
                                                   child: const Icon(
                                                     Icons.more_vert,
@@ -401,7 +421,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddNotesScreen()),
+            MaterialPageRoute(builder: (context) => AddNotesScreen()),
           );
         },
         backgroundColor: const Color(0xFF6C63FF),

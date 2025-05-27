@@ -9,13 +9,36 @@ import 'dart:convert';
 import '../widgets/option_bottom_sheet.dart';
 
 class AddNotesScreen extends ConsumerStatefulWidget {
-  const AddNotesScreen({super.key});
+  final NotesModel? note;
+  const AddNotesScreen({super.key, this.note});
 
   @override
   ConsumerState<AddNotesScreen> createState() => _AddNotesScreenState();
 }
 
 class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title ?? '';
+      _controller.document = Document.fromJson(
+        jsonDecode(widget.note!.content ?? '{}'),
+      );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(selectColorStateProvider.notifier)
+            .update(
+              (state) => Color(int.parse(widget.note!.color ?? '0xFFFFFFFF')),
+            );
+        ref
+            .read(selectCategoryStateProvider.notifier)
+            .update((state) => widget.note!.category ?? 'Personal');
+      });
+    }
+  }
+
   final QuillController _controller = QuillController.basic();
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _contentFocusNode = FocusNode();
@@ -65,12 +88,14 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
     final note = NotesModel(
       title: title,
       content: content,
-      date: DateTime.now(),
+      date: widget.note != null ? widget.note!.date : DateTime.now(),
       color: ref.watch(selectColorStateProvider).toARGB32().toString(),
       category: ref.read(selectCategoryStateProvider),
     );
 
-    ref.read(notesProvider.notifier).addNote(note);
+    widget.note != null
+        ? ref.read(notesProvider.notifier).updateNote(widget.note!.key!, note)
+        : ref.read(notesProvider.notifier).addNote(note);
     Navigator.pop(context);
   }
 
@@ -82,7 +107,10 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
           (context) => OptionsBottomSheet(
             onShare: () {},
             onExport: () {},
-            onDelete: () {},
+            onDelete: () {
+              ref.read(notesProvider.notifier).deleteNote(widget.note!);
+              Navigator.pop(context);
+            },
           ),
     );
   }
@@ -95,7 +123,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         title: Text(
-          'New Note',
+          widget.note != null ? 'Edit Note' : 'New Note',
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -113,16 +141,18 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {
-              _showOptionsMenu();
-            },
-          ),
+          if (widget.note != null) ...[
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              onPressed: () {
+                _showOptionsMenu();
+              },
+            ),
+          ],
           TextButton(
             onPressed: _saveNote,
             child: Text(
-              'Save',
+              widget.note != null ? 'Update' : 'Save',
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
