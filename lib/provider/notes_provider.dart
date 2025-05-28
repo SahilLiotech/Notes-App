@@ -49,7 +49,7 @@ class NotesState extends Notifier<List<NotesModel>> {
   }
 
   void filterNotes(String category) {
-    if (category.isEmpty) {
+    if (category.isEmpty || category == 'All') {
       state = notesBox.values.toList();
     } else {
       state =
