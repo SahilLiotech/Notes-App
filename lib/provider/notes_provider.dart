@@ -24,13 +24,13 @@ class NotesState extends Notifier<List<NotesModel>> {
     state = notesBox.values.toList();
   }
 
-  void deleteNote(int index) {
-    notesBox.deleteAt(index);
+  void deleteNote(NotesModel note) {
+    notesBox.delete(note.key);
     state = notesBox.values.toList();
   }
 
-  void updateNote(int index, NotesModel note) {
-    notesBox.putAt(index, note);
+  void updateNote(int key, NotesModel note) {
+    notesBox.put(key, note);
     state = notesBox.values.toList();
   }
 
@@ -49,7 +49,7 @@ class NotesState extends Notifier<List<NotesModel>> {
   }
 
   void filterNotes(String category) {
-    if (category.isEmpty) {
+    if (category.isEmpty || category == 'All') {
       state = notesBox.values.toList();
     } else {
       state =
@@ -64,11 +64,12 @@ class NotesState extends Notifier<List<NotesModel>> {
   }
 
   void sortNotesByDate(String order) {
-    if (order == 'oldToNew') {
-      state.sort((a, b) => a.date!.compareTo(b.date!));
-    } else if (order == 'newToOld') {
-      state.sort((a, b) => b.date!.compareTo(a.date!));
+    final sortedNotes = [...state];
+    if (order == 'Old to New') {
+      sortedNotes.sort((a, b) => a.date!.compareTo(b.date!));
+    } else {
+      sortedNotes.sort((a, b) => b.date!.compareTo(a.date!));
     }
-    state.sort((a, b) => b.date!.compareTo(a.date!));
+    state = sortedNotes;
   }
 }
