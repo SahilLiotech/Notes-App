@@ -4,6 +4,14 @@ A beautiful and lightweight Notes App built using **Flutter**, featuring **local
 
 ---
 
+## 📦 Download APK
+
+You can directly download and try the app from the link below:
+
+👉 [**Download APK from Google Drive**](https://drive.google.com/file/d/1mOLZEJTjWZRT0NzRsx7VD2FY5G_rOumq/view?usp=sharing)
+
+> _Note: You may see a "Google Drive can’t scan this file for viruses" message — it's safe to proceed._
+
 ## 📱 Features
 
 - ✅ Add, Edit, Delete, and View Notes
