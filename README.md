@@ -40,7 +40,7 @@ You can directly download and try the app from the link below:
 
 ![Home Screen](https://github.com/user-attachments/assets/54419b9a-acd2-47d7-9447-b20d537325a9)
 
-### ⚙️ Options (Edit/Delete/Share)
+### ⚙️ Options (Download/Delete/Share)
 
 ![Options](https://github.com/user-attachments/assets/d76ea235-81d3-4445-9cfa-d590ffff6add)
 
