@@ -131,7 +131,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
     final isSmallScreen = MediaQuery.of(context).size.width < 400;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
           widget.note != null ? 'Edit Note' : 'New Note',

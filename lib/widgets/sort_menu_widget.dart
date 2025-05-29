@@ -10,7 +10,17 @@ class SortMenuWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PopupMenuButton(
-      icon: const Icon(Icons.sort, color: Color(0xFF6C63FF)),
+      child: Row(
+        children: [
+          Text(
+            'Sort',
+            style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.sort, color: Color(0xFF6C63FF)),
+        ],
+      ),
+
       itemBuilder: (context) {
         return [
           PopupMenuItem(
