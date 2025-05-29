@@ -4,7 +4,9 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:notes_app/widgets/custom_toast.dart';
 import 'package:notes_app/widgets/option_bottom_sheet.dart';
+import 'package:notes_app/widgets/save_pdf_helper.dart';
 import '../datasource/notes_model.dart';
 import '../provider/notes_provider.dart';
 import '../screens/add_notes_screen.dart';
@@ -150,9 +152,12 @@ class NotesCard extends ConsumerWidget {
       builder:
           (context) => OptionsBottomSheet(
             onShare: () {},
-            onExport: () {},
+            onDownload: () {
+              SavePdfHelper().savePdf(note.title!, note.content!);
+            },
             onDelete: () {
               ref.read(notesProvider.notifier).deleteNote(note);
+              CustomToast.showSuccess("Deleted!", "Note deleted successfully.");
             },
           ),
     );

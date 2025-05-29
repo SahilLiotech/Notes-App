@@ -106,7 +106,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
       builder:
           (context) => OptionsBottomSheet(
             onShare: () {},
-            onExport: () {},
+            onDownload: () {},
             onDelete: () {
               ref.read(notesProvider.notifier).deleteNote(widget.note!);
               Navigator.pop(context);
