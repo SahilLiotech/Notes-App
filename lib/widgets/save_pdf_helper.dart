@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SavePdfHelper {
   void savePdf(String fileName, String content) async {
@@ -61,6 +62,47 @@ class SavePdfHelper {
 
     final filePath = file.path;
     await OpenFile.open(filePath);
+  }
+
+  void sharePdf(String fileName, String content) async {
+    final pdf = pw.Document();
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build:
+            (context) => [
+              pw.Header(
+                level: 0,
+                child: pw.Text(
+                  fileName,
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ),
+              pw.RichText(
+                text: _convertQuillToPdfTextSpan(
+                  Document.fromJson(jsonDecode(content)),
+                ),
+              ),
+            ],
+      ),
+    );
+
+    final dir = await getTemporaryDirectory();
+    final outputDir = Directory("${dir.path}/NotesApp");
+    if (!await outputDir.exists()) {
+      await outputDir.create(recursive: true);
+    }
+    final filePath = "${outputDir.path}/$fileName.pdf";
+    final file = File(filePath);
+    await file.writeAsBytes(await pdf.save());
+
+    final xFile = XFile(filePath);
+    SharePlus.instance.share(
+      ShareParams(files: [xFile], text: "Sharing Note: $fileName"),
+    );
   }
 
   Future<bool> _requestStoragePermission() async {

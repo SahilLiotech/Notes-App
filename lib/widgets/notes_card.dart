@@ -151,7 +151,9 @@ class NotesCard extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       builder:
           (context) => OptionsBottomSheet(
-            onShare: () {},
+            onShare: () {
+              SavePdfHelper().sharePdf(note.title!, note.content!);
+            },
             onDownload: () {
               SavePdfHelper().savePdf(note.title!, note.content!);
             },
