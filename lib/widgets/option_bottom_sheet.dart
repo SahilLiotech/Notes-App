@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class OptionsBottomSheet extends StatelessWidget {
   final VoidCallback onShare;
-  final VoidCallback onExport;
-  final VoidCallback onDelete;  
+  final VoidCallback onDownload;
+  final VoidCallback onDelete;
 
   const OptionsBottomSheet({
     super.key,
     required this.onShare,
-    required this.onExport,
+    required this.onDownload,
     required this.onDelete,
   });
 
@@ -45,10 +45,10 @@ class OptionsBottomSheet extends StatelessWidget {
             _buildOptionTile(
               context,
               icon: Icons.file_download_outlined,
-              title: 'Export',
+              title: 'Download as PDF',
               onTap: () {
                 Navigator.pop(context);
-                onExport();
+                onDownload();
               },
             ),
             _buildOptionTile(

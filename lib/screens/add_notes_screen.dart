@@ -7,6 +7,7 @@ import 'package:notes_app/datasource/notes_model.dart';
 import 'dart:convert';
 
 import '../widgets/option_bottom_sheet.dart';
+import '../widgets/save_pdf_helper.dart';
 
 class AddNotesScreen extends ConsumerStatefulWidget {
   final NotesModel? note;
@@ -105,8 +106,18 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
       backgroundColor: Colors.transparent,
       builder:
           (context) => OptionsBottomSheet(
-            onShare: () {},
-            onExport: () {},
+            onShare: () {
+              SavePdfHelper().sharePdf(
+                widget.note!.title!,
+                widget.note!.content!,
+              );
+            },
+            onDownload: () {
+              SavePdfHelper().savePdf(
+                widget.note!.title!,
+                widget.note!.content!,
+              );
+            },
             onDelete: () {
               ref.read(notesProvider.notifier).deleteNote(widget.note!);
               Navigator.pop(context);
