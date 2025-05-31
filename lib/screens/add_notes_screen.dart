@@ -129,8 +129,6 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isSmallScreen = MediaQuery.of(context).size.width < 400;
-
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -197,116 +195,124 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
         ),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          spacing: 24,
-          children: [
-            TextField(
-              controller: _titleController,
-              focusNode: _titleFocusNode,
-              style: GoogleFonts.poppins(fontSize: 20),
-              decoration: InputDecoration(
-                hintText: 'Title',
-                hintStyle: GoogleFonts.poppins(color: Colors.grey),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.black, width: 1),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            spacing: 24,
+            children: [
+              TextField(
+                controller: _titleController,
+                focusNode: _titleFocusNode,
+                style: GoogleFonts.poppins(fontSize: 20),
+                decoration: InputDecoration(
+                  hintText: 'Title',
+                  hintStyle: GoogleFonts.poppins(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.black, width: 1),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               ),
-            ),
 
-            Row(
-              children: [
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: cardColors.length,
-                    itemBuilder: (context, index) {
-                      final color = cardColors[index];
-                      return Consumer(
-                        builder: (context, ref, child) {
-                          final selectedColor = ref.watch(
-                            selectColorStateProvider,
-                          );
-                          return GestureDetector(
-                            onTap:
-                                () => ref
-                                    .read(selectColorStateProvider.notifier)
-                                    .update((state) => color),
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color:
-                                      selectedColor == color
-                                          ? Colors.black
-                                          : Colors.transparent,
-                                  width: 2,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: cardColors.length,
+                        itemBuilder: (context, index) {
+                          final color = cardColors[index];
+                          return Consumer(
+                            builder: (context, ref, child) {
+                              final selectedColor = ref.watch(
+                                selectColorStateProvider,
+                              );
+                              return GestureDetector(
+                                onTap:
+                                    () => ref
+                                        .read(selectColorStateProvider.notifier)
+                                        .update((state) => color),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: color,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color:
+                                          selectedColor == color
+                                              ? Colors.black
+                                              : Colors.transparent,
+                                      width: 2,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
-                ),
-
-                const Spacer(),
-
-                Consumer(
-                  builder: (context, ref, watch) {
-                    final selectedCategory = ref.watch(
-                      selectCategoryStateProvider,
-                    );
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey.shade400,
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedCategory,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.black,
+                    ),
+
+                    Consumer(
+                      builder: (context, ref, watch) {
+                        final selectedCategory = ref.watch(
+                          selectCategoryStateProvider,
+                        );
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey.shade400,
                           ),
-                          icon: const Icon(Icons.keyboard_arrow_down, size: 20),
-                          items:
-                              categories
-                                  .map(
-                                    (cat) => DropdownMenuItem(
-                                      value: cat,
-                                      child: Text(cat),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (value) {
-                            if (value != null) {
-                              ref
-                                  .read(selectCategoryStateProvider.notifier)
-                                  .update((state) => value);
-                            }
-                          },
-                        ),
-                      ),
-                    );
-                  },
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedCategory,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 20,
+                              ),
+                              items:
+                                  categories
+                                      .map(
+                                        (cat) => DropdownMenuItem(
+                                          value: cat,
+                                          child: Text(cat),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  ref
+                                      .read(
+                                        selectCategoryStateProvider.notifier,
+                                      )
+                                      .update((state) => value);
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
 
-            Expanded(
-              child: Container(
+              Container(
+                height: MediaQuery.of(context).size.height * 0.6,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
@@ -319,6 +325,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                     scrollController: ScrollController(),
                     focusNode: _contentFocusNode,
                     config: QuillEditorConfig(
+                      scrollable: true,
                       expands: true,
                       padding: EdgeInsets.zero,
                       placeholder: "Start writing...",
@@ -326,9 +333,8 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                   ),
                 ),
               ),
-            ),
 
-            if (!isSmallScreen)
+              // if (!isSmallScreen)
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: QuillSimpleToolbar(
@@ -364,7 +370,8 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );
