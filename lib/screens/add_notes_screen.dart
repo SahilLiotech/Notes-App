@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:notes_app/provider/notes_provider.dart';
 import 'package:notes_app/datasource/notes_model.dart';
 import 'dart:convert';
@@ -133,45 +134,67 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: Text(
-          widget.note != null ? 'Edit Note' : 'New Note',
-          style: GoogleFonts.poppins(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF6C63FF),
+        backgroundColor: Colors.grey.shade100,
         elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          if (widget.note != null) ...[
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.white),
-              onPressed: () {
-                _showOptionsMenu();
-              },
-            ),
-          ],
-          TextButton(
-            onPressed: _saveNote,
-            child: Text(
-              widget.note != null ? 'Update' : 'Save',
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+        toolbarHeight: 80,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Row(
+            spacing: 4,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
               ),
-            ),
+              Expanded(
+                child: Column(
+                  spacing: 4,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.note != null ? 'Edit Note' : 'New Note',
+                      style: GoogleFonts.poppins(
+                        color: Colors.black87,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      widget.note != null
+                          ? 'Last edited: ${DateFormat('dd/MM/yyy HH:mm').format(widget.note!.date!)}'
+                          : 'Creating a new note',
+                      style: GoogleFonts.poppins(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (widget.note != null)
+                IconButton(
+                  icon: const Icon(Icons.more_vert, color: Colors.black),
+                  onPressed: _showOptionsMenu,
+                ),
+              TextButton(
+                onPressed: _saveNote,
+                child: Text(
+                  widget.note != null ? 'Update' : 'Save',
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF6C63FF),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
 
       body: Padding(
