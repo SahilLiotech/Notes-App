@@ -18,43 +18,47 @@ class FilterMenuWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8.0),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.0)),
-      child: PopupMenuButton(
-        icon: const Icon(Icons.filter_list, color: Color(0xFF6C63FF)),
-        itemBuilder: (context) {
-          return [
-            PopupMenuItem(
-              enabled: false,
-              value: 'All',
-              child: Text(
-                'Filter By Categories',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+    final selectedCategory = ref.watch(selectCategoryStateProvider);
+    final primaryColor = const Color(0xFF6C63FF);
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children:
+          categories.map((category) {
+            final isSelected = selectedCategory == category;
+
+            return GestureDetector(
+              onTap: () {
+                ref
+                    .read(selectCategoryStateProvider.notifier)
+                    .update((state) => category);
+                ref.read(notesProvider.notifier).filterNotes(category);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-              ),
-            ),
-            ...categories.map((category) {
-              return PopupMenuItem(
-                value: category,
+                decoration: BoxDecoration(
+                  color: isSelected ? primaryColor : primaryColor.withAlpha(26),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? primaryColor : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
                 child: Text(
                   category,
                   style: GoogleFonts.poppins(
+                    color: isSelected ? Colors.white : primaryColor,
                     fontSize: 14,
-                    color: Colors.black87,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
-              );
-            }),
-          ];
-        },
-        onSelected: (value) {
-          final selectedCategory = value;
-          ref.read(notesProvider.notifier).filterNotes(selectedCategory);
-        },
-      ),
+              ),
+            );
+          }).toList(),
     );
   }
 }

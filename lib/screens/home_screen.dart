@@ -6,9 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:notes_app/provider/notes_provider.dart';
 import 'package:notes_app/screens/add_notes_screen.dart';
 import 'package:notes_app/widgets/empty_notes_widget.dart';
+import 'package:notes_app/widgets/filter_menu_widget.dart';
 import 'package:notes_app/widgets/notes_card.dart';
 import 'package:notes_app/widgets/search_bar_widget.dart';
-import 'package:notes_app/widgets/sort_menu_widget.dart';
 import 'package:notes_app/widgets/toggle_view_button.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -75,6 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           spacing: 16,
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               decoration: BoxDecoration(
@@ -91,19 +92,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               child: SearchBarWidget(controller: searchController),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Your Notes',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+
+            Text(
+              "Categories:",
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.start,
+            ),
+            FilterMenuWidget(),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                "Tools:",
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
-                SortMenuWidget(),
-              ],
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                spacing: 8,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF6C63FF).withAlpha(26),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.transparent, width: 2),
+                    ),
+                    child: Row(
+                      spacing: 4,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/images/AI.png',
+                          height: 30,
+                          width: 30,
+                        ),
+                        Text(
+                          "AI Summarizer",
+                          style: GoogleFonts.poppins(
+                            color: Color(0xFF6C63FF),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF6C63FF).withAlpha(26),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.transparent, width: 2),
+                    ),
+                    child: Row(
+                      spacing: 4,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/images/generator.png',
+                          height: 25,
+                          width: 25,
+                        ),
+                        Text(
+                          "Generate Notes",
+                          style: GoogleFonts.poppins(
+                            color: Color(0xFF6C63FF),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             Row(
