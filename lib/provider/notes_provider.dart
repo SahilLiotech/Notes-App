@@ -7,6 +7,8 @@ final selectColorStateProvider = StateProvider<Color>((ref) => Colors.white);
 
 final selectCategoryStateProvider = StateProvider<String>((ref) => 'Personal');
 
+final selectViewStateProvider = StateProvider<String>((ref) => 'Grid');
+
 final notesProvider = NotifierProvider<NotesState, List<NotesModel>>(
   () => NotesState(),
 );
