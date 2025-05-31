@@ -9,39 +9,33 @@ class SortMenuWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PopupMenuButton(
-      child: Row(
-        children: [
-          Text(
-            'Sort',
-            style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.sort, color: Color(0xFF6C63FF)),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: PopupMenuButton(
+        child: const Icon(Icons.sort, color: Color(0xFF6C63FF)),
 
-      itemBuilder: (context) {
-        return [
-          PopupMenuItem(
-            value: 'Old to New',
-            child: Text(
-              'Old to New',
-              style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
+        itemBuilder: (context) {
+          return [
+            PopupMenuItem(
+              value: 'Old to New',
+              child: Text(
+                'Old to New',
+                style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
+              ),
             ),
-          ),
-          PopupMenuItem(
-            value: 'New to Old',
-            child: Text(
-              'New to Old',
-              style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
+            PopupMenuItem(
+              value: 'New to Old',
+              child: Text(
+                'New to Old',
+                style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
+              ),
             ),
-          ),
-        ];
-      },
-      onSelected: (value) {
-        ref.read(notesProvider.notifier).sortNotesByDate(value);
-      },
+          ];
+        },
+        onSelected: (value) {
+          ref.read(notesProvider.notifier).sortNotesByDate(value);
+        },
+      ),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notes_app/provider/notes_provider.dart';
-import 'package:notes_app/widgets/filter_menu_widget.dart';
+import 'package:notes_app/widgets/sort_menu_widget.dart';
 
 class SearchBarWidget extends ConsumerWidget {
   final TextEditingController controller;
@@ -50,7 +50,7 @@ class SearchBarWidget extends ConsumerWidget {
               },
             ),
           ),
-          FilterMenuWidget(),
+          SortMenuWidget(),
         ],
       ),
     );
