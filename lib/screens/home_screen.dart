@@ -10,6 +10,9 @@ import 'package:notes_app/widgets/filter_menu_widget.dart';
 import 'package:notes_app/widgets/notes_card.dart';
 import 'package:notes_app/widgets/search_bar_widget.dart';
 import 'package:notes_app/widgets/toggle_view_button.dart';
+import 'package:notes_app/widgets/tools_options.dart';
+
+import '../widgets/generate_notes_bottom_sheet.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -118,78 +121,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Row(
                 spacing: 8,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF6C63FF).withAlpha(26),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.transparent, width: 2),
-                    ),
-                    child: Row(
-                      spacing: 4,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/AI.png',
-                          height: 30,
-                          width: 30,
-                        ),
-                        Text(
-                          "AI Summarizer",
-                          style: GoogleFonts.poppins(
-                            color: Color(0xFF6C63FF),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                  ToolsOptions(
+                    iconData: Icons.psychology_outlined,
+                    text: 'AI Summarizer',
+                    onTap: () {},
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF6C63FF).withAlpha(26),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.transparent, width: 2),
-                    ),
-                    child: Row(
-                      spacing: 4,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/generator.png',
-                          height: 25,
-                          width: 25,
-                        ),
-                        Text(
-                          "Generate Notes",
-                          style: GoogleFonts.poppins(
-                            color: Color(0xFF6C63FF),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                  ToolsOptions(
+                    iconData: Icons.auto_awesome_outlined,
+                    text: "Generate Notes",
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        useRootNavigator: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
                           ),
                         ),
-                      ],
-                    ),
+                        builder: (context) => const GenerateNotesBottomSheet(),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
 
             Row(
-              spacing: 8,
+              spacing: 12,
               children: [
                 Text(
                   'View:',
                   style: GoogleFonts.poppins(
                     fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
                 ),
