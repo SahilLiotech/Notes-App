@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notes_app/widgets/custom_toast.dart';
 
-class AiSummarizerBottomSheet extends StatefulWidget {
+import '../provider/notes_provider.dart';
+
+class AiSummarizerBottomSheet extends ConsumerStatefulWidget {
   const AiSummarizerBottomSheet({super.key});
 
   @override
-  State<AiSummarizerBottomSheet> createState() =>
+  ConsumerState<AiSummarizerBottomSheet> createState() =>
       _AiSummarizerBottomSheetState();
 }
 
-class _AiSummarizerBottomSheetState extends State<AiSummarizerBottomSheet> {
+class _AiSummarizerBottomSheetState
+    extends ConsumerState<AiSummarizerBottomSheet> {
   final TextEditingController promptController = TextEditingController();
   bool isGenerating = false;
 
@@ -176,26 +180,41 @@ class _AiSummarizerBottomSheetState extends State<AiSummarizerBottomSheet> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: DropdownButton(
-                      borderRadius: BorderRadius.circular(16),
-                      padding: const EdgeInsets.all(8),
-                      isExpanded: true,
-                      underline: const SizedBox(),
-                      hint: const Text(
-                        'Select a note',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      value: null,
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'Personal',
-                          child: Text('Personal'),
-                        ),
-                        DropdownMenuItem(value: 'Work', child: Text('Work')),
-                        DropdownMenuItem(value: 'Study', child: Text('Study')),
-                        DropdownMenuItem(value: 'Other', child: Text('Other')),
-                      ],
-                      onChanged: (value) {},
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final notes = ref.watch(notesProvider);
+                        return DropdownButton(
+                          borderRadius: BorderRadius.circular(16),
+                          padding: const EdgeInsets.all(8),
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          hint: const Text(
+                            'Select a note',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          value: null,
+                          items:
+                              notes.isNotEmpty
+                                  ? notes.map((note) {
+                                    return DropdownMenuItem(
+                                      value: note,
+                                      child: Text(
+                                        note.title ?? 'No Title',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.grey.shade800,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList()
+                                  : [
+                                    DropdownMenuItem(
+                                      child: Text('No notes available'),
+                                    ),
+                                  ],
+                          onChanged: (value) {},
+                        );
+                      },
                     ),
                   ),
                 ),

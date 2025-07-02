@@ -221,7 +221,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       )
                       : ListView.separated(
                         itemCount: notes.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, _) => const SizedBox(height: 12),
                         physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.only(bottom: 20),
                         itemBuilder: (context, index) {
