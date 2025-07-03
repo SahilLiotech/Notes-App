@@ -9,6 +9,12 @@ final selectCategoryStateProvider = StateProvider<String>((ref) => 'Personal');
 
 final selectViewStateProvider = StateProvider<String>((ref) => 'Grid');
 
+final isGeneratingProvider = StateProvider<bool>((ref) => false);
+
+final generatedSummaryProvider = StateProvider<String>((ref) => '');
+
+final generatedNoteProvider = StateProvider<String>((ref) => '');
+
 final notesProvider = NotifierProvider<NotesState, List<NotesModel>>(
   () => NotesState(),
 );

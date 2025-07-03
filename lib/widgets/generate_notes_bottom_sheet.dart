@@ -1,16 +1,20 @@
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notes_app/provider/notes_provider.dart';
 import 'package:notes_app/widgets/custom_toast.dart';
 
-class GenerateNotesBottomSheet extends StatefulWidget {
+class GenerateNotesBottomSheet extends ConsumerStatefulWidget {
   const GenerateNotesBottomSheet({super.key});
 
   @override
-  State<GenerateNotesBottomSheet> createState() =>
+  ConsumerState<GenerateNotesBottomSheet> createState() =>
       _GenerateNotesBottomSheetState();
 }
 
-class _GenerateNotesBottomSheetState extends State<GenerateNotesBottomSheet> {
+class _GenerateNotesBottomSheetState
+    extends ConsumerState<GenerateNotesBottomSheet> {
   final TextEditingController promptController = TextEditingController();
   bool isGenerating = false;
 
@@ -24,10 +28,61 @@ class _GenerateNotesBottomSheetState extends State<GenerateNotesBottomSheet> {
     super.dispose();
   }
 
-  void _generateNotes() {
-    if (promptController.text.trim().isEmpty) return;
+  void _generateNotes() async {
+    final prompt = promptController.text.trim();
+    if (prompt.isEmpty) {
+      CustomToast.shoeFailed("Error", "Please enter a prompt.");
+      return;
+    }
+    ref.read(isGeneratingProvider.notifier).state = true;
+    ref.read(generatedNoteProvider.notifier).state = '';
 
-    CustomToast.showSuccess("Success", "Notes generated successfully.");
+    try {
+      final modelNames = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-pro'];
+      GenerativeModel? model;
+
+      for (final modelName in modelNames) {
+        try {
+          model = FirebaseAI.googleAI().generativeModel(model: modelName);
+          break;
+        } catch (e) {
+          debugPrint('Failed to create model $modelName: $e');
+          continue;
+        }
+      }
+
+      if (model == null) {
+        CustomToast.shoeFailed(
+          "Error",
+          "No available AI model found. Please try again later.",
+        );
+      }
+
+      final result = await model?.generateContent([Content.text(prompt)]);
+
+      if (result != null) {
+        ref.read(isGeneratingProvider.notifier).state = false;
+        if (result.text == null || result.text!.isEmpty) {
+          CustomToast.shoeFailed(
+            "Error",
+            "AI did not return any content. Please try a different prompt.",
+          );
+        } else {
+          CustomToast.showSuccess("Success", "Notes generated successfully.");
+          ref.read(generatedNoteProvider.notifier).state = result.text ?? '';
+        }
+      }
+    } catch (e, stack) {
+      debugPrint('Error generating notes: $e \n StackTrace: $stack');
+      CustomToast.shoeFailed(
+        "Error",
+        "Failed to generate notes. Please try again.",
+      );
+    } finally {
+      ref.read(isGeneratingProvider.notifier).state = false;
+      promptController.clear();
+      FocusScope.of(context).unfocus();
+    }
   }
 
   @override
