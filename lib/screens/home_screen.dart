@@ -5,6 +5,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notes_app/provider/notes_provider.dart';
 import 'package:notes_app/screens/add_notes_screen.dart';
+import 'package:notes_app/widgets/ai_summarizer_bottom_sheet.dart';
 import 'package:notes_app/widgets/empty_notes_widget.dart';
 import 'package:notes_app/widgets/filter_menu_widget.dart';
 import 'package:notes_app/widgets/notes_card.dart';
@@ -124,7 +125,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ToolsOptions(
                     iconData: Icons.psychology_outlined,
                     text: 'AI Summarizer',
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        useRootNavigator: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) => const AiSummarizerBottomSheet(),
+                      );
+                    },
                   ),
                   ToolsOptions(
                     iconData: Icons.auto_awesome_outlined,
@@ -207,7 +221,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       )
                       : ListView.separated(
                         itemCount: notes.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, _) => const SizedBox(height: 12),
                         physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.only(bottom: 20),
                         itemBuilder: (context, index) {
