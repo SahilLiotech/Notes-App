@@ -126,6 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     iconData: Icons.psychology_outlined,
                     text: 'AI Summarizer',
                     onTap: () {
+                      ref.read(generatedSummaryProvider.notifier).state = '';
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,

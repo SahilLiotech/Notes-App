@@ -9,9 +9,11 @@ final selectCategoryStateProvider = StateProvider<String>((ref) => 'Personal');
 
 final selectViewStateProvider = StateProvider<String>((ref) => 'Grid');
 
-final notesProvider = NotifierProvider<NotesState, List<NotesModel>>(
-  () => NotesState(),
-);
+final isGeneratingProvider = StateProvider<bool>((ref) => false);
+
+final generatedSummaryProvider = StateProvider<String>((ref) => '');
+
+final notesProvider = NotifierProvider<NotesState, List<NotesModel>>(() => NotesState());
 
 class NotesState extends Notifier<List<NotesModel>> {
   late Box<NotesModel> notesBox;
@@ -40,13 +42,7 @@ class NotesState extends Notifier<List<NotesModel>> {
     if (query.isEmpty) {
       state = notesBox.values.toList();
     } else {
-      state =
-          notesBox.values
-              .where(
-                (note) =>
-                    note.title!.toLowerCase().contains(query.toLowerCase()),
-              )
-              .toList();
+      state = notesBox.values.where((note) => note.title!.toLowerCase().contains(query.toLowerCase())).toList();
     }
   }
 
@@ -54,14 +50,7 @@ class NotesState extends Notifier<List<NotesModel>> {
     if (category.isEmpty || category == 'All') {
       state = notesBox.values.toList();
     } else {
-      state =
-          notesBox.values
-              .where(
-                (notes) => notes.category!.toLowerCase().contains(
-                  category.toLowerCase(),
-                ),
-              )
-              .toList();
+      state = notesBox.values.where((notes) => notes.category!.toLowerCase().contains(category.toLowerCase())).toList();
     }
   }
 
