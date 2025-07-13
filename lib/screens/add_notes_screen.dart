@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,15 +20,16 @@ class AddNotesScreen extends ConsumerStatefulWidget {
 }
 
 class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
+  bool get isAiNote => widget.note?.category == "AI Generated";
+
   @override
   void initState() {
     super.initState();
-    if (widget.note != null) {
+    if (widget.note != null && !isAiNote) {
       _titleController.text = widget.note!.title ?? '';
       _controller.document = Document.fromJson(
         jsonDecode(widget.note!.content ?? '{}'),
       );
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref
             .read(selectColorStateProvider.notifier)
@@ -37,6 +39,18 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
         ref
             .read(selectCategoryStateProvider.notifier)
             .update((state) => widget.note!.category ?? 'Personal');
+      });
+    } else if (widget.note != null && isAiNote) {
+      _titleController.text = widget.note!.title ?? '';
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(selectColorStateProvider.notifier)
+            .update(
+              (state) => Color(int.parse(widget.note!.color ?? '0xFFFFFFFF')),
+            );
+        ref
+            .read(selectCategoryStateProvider.notifier)
+            .update((state) => widget.note!.category ?? 'AI Generated');
       });
     }
   }
@@ -58,6 +72,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
 
   final List<String> categories = [
     'Personal',
+    'AI Generated',
     'Work',
     'Ideas',
     'To-Do',
@@ -214,6 +229,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
+                readOnly: isAiNote, // Make title read-only for AI notes
               ),
 
               SingleChildScrollView(
@@ -311,65 +327,106 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                 ),
               ),
 
-              Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey, width: 2),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: QuillEditor(
+              isAiNote && widget.note != null
+                  ? Container(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey, width: 2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: SingleChildScrollView(
+                        child: MarkdownBody(
+                          data: widget.note!.content ?? '',
+                          styleSheet: MarkdownStyleSheet.fromTheme(
+                            Theme.of(context),
+                          ).copyWith(
+                            p: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                            h1: GoogleFonts.poppins(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            h2: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            h3: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            code: GoogleFonts.robotoMono(
+                              fontSize: 13,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  : Container(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey, width: 2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: QuillEditor(
+                        controller: _controller,
+                        scrollController: ScrollController(),
+                        focusNode: _contentFocusNode,
+                        config: QuillEditorConfig(
+                          scrollable: true,
+                          expands: true,
+                          padding: EdgeInsets.zero,
+                          placeholder: "Start writing...",
+                        ),
+                      ),
+                    ),
+                  ),
+
+              if (!isAiNote)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: QuillSimpleToolbar(
                     controller: _controller,
-                    scrollController: ScrollController(),
-                    focusNode: _contentFocusNode,
-                    config: QuillEditorConfig(
-                      scrollable: true,
-                      expands: true,
-                      padding: EdgeInsets.zero,
-                      placeholder: "Start writing...",
+                    config: QuillSimpleToolbarConfig(
+                      color: Colors.grey.shade200,
+                      showAlignmentButtons: true,
+                      showBackgroundColorButton: false,
+                      showCenterAlignment: true,
+                      showColorButton: false,
+                      showCodeBlock: false,
+                      showDirection: false,
+                      showFontFamily: false,
+                      showDividers: false,
+                      showIndent: false,
+                      showInlineCode: false,
+                      showJustifyAlignment: false,
+                      showLeftAlignment: true,
+                      showLink: false,
+                      showListNumbers: true,
+                      showListBullets: true,
+                      showListCheck: true,
+                      showQuote: true,
+                      showRightAlignment: true,
+                      showSearchButton: false,
+                      showSmallButton: false,
+                      showHeaderStyle: true,
+                      showUnderLineButton: true,
+                      showStrikeThrough: true,
+                      showSubscript: false,
+                      showSuperscript: false,
+                      multiRowsDisplay: false,
                     ),
                   ),
                 ),
-              ),
-
-              // if (!isSmallScreen)
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: QuillSimpleToolbar(
-                  controller: _controller,
-                  config: QuillSimpleToolbarConfig(
-                    color: Colors.grey.shade200,
-                    showAlignmentButtons: true,
-                    showBackgroundColorButton: false,
-                    showCenterAlignment: true,
-                    showColorButton: false,
-                    showCodeBlock: false,
-                    showDirection: false,
-                    showFontFamily: false,
-                    showDividers: false,
-                    showIndent: false,
-                    showInlineCode: false,
-                    showJustifyAlignment: false,
-                    showLeftAlignment: true,
-                    showLink: false,
-                    showListNumbers: true,
-                    showListBullets: true,
-                    showListCheck: true,
-                    showQuote: true,
-                    showRightAlignment: true,
-                    showSearchButton: false,
-                    showSmallButton: false,
-                    showHeaderStyle: true,
-                    showUnderLineButton: true,
-                    showStrikeThrough: true,
-                    showSubscript: false,
-                    showSuperscript: false,
-                    multiRowsDisplay: false,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
