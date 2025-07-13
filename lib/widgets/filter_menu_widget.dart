@@ -9,6 +9,7 @@ class FilterMenuWidget extends ConsumerWidget {
 
   final List<String> categories = const [
     'All',
+    'AI Generated',
     'Personal',
     'Work',
     'Ideas',

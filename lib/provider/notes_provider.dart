@@ -15,6 +15,10 @@ final generatedSummaryProvider = StateProvider<String>((ref) => '');
 
 final generatedNoteProvider = StateProvider<String>((ref) => '');
 
+final generatedNotesContectProvider = StateProvider<String>((ref) => '');
+
+final showPreviewProvider = StateProvider<bool>((ref) => false);
+
 final notesProvider = NotifierProvider<NotesState, List<NotesModel>>(
   () => NotesState(),
 );

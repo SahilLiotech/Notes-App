@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:notes_app/widgets/custom_toast.dart';
 import 'package:notes_app/widgets/option_bottom_sheet.dart';
-import 'package:notes_app/widgets/save_pdf_helper.dart';
+import 'package:notes_app/widgets/save_pdf_helper.dart'; // Add this import
 import '../datasource/notes_model.dart';
 import '../provider/notes_provider.dart';
 import '../screens/add_notes_screen.dart';
@@ -79,23 +80,54 @@ class NotesCard extends ConsumerWidget {
                     Container(
                       constraints: const BoxConstraints(maxHeight: 120),
                       child: ClipRRect(
-                        child: QuillEditor(
-                          controller: QuillController(
-                            readOnly: true,
-                            document: Document.fromJson(
-                              jsonDecode(note.content!),
-                            ),
-                            selection: const TextSelection.collapsed(offset: 0),
-                          ),
-                          scrollController: ScrollController(),
-                          focusNode: FocusNode(),
-                          config: const QuillEditorConfig(
-                            padding: EdgeInsets.zero,
-                            showCursor: false,
-                            autoFocus: false,
-                            expands: false,
-                          ),
-                        ),
+                        child:
+                            note.category == "AI Generated"
+                                ? MarkdownBody(
+                                  data: note.content!,
+                                  styleSheet: MarkdownStyleSheet.fromTheme(
+                                    Theme.of(context),
+                                  ).copyWith(
+                                    p: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                    h1: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    h2: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    h3: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    code: GoogleFonts.robotoMono(
+                                      fontSize: 13,
+                                      color: Colors.deepPurple,
+                                    ),
+                                  ),
+                                )
+                                : QuillEditor(
+                                  controller: QuillController(
+                                    readOnly: true,
+                                    document: Document.fromJson(
+                                      jsonDecode(note.content!),
+                                    ),
+                                    selection: const TextSelection.collapsed(
+                                      offset: 0,
+                                    ),
+                                  ),
+                                  scrollController: ScrollController(),
+                                  focusNode: FocusNode(),
+                                  config: const QuillEditorConfig(
+                                    padding: EdgeInsets.zero,
+                                    showCursor: false,
+                                    autoFocus: false,
+                                    expands: false,
+                                  ),
+                                ),
                       ),
                     )
                   else
