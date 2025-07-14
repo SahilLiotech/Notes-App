@@ -90,9 +90,12 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
 
   void _saveNote() {
     final title = _titleController.text.trim();
-    final content = jsonEncode(_controller.document.toDelta().toJson());
+    final content =
+        isAiNote && widget.note != null
+            ? widget.note!.content
+            : jsonEncode(_controller.document.toDelta().toJson());
 
-    if (title.isEmpty || content.isEmpty) {
+    if (title.isEmpty || content!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Title and content cannot be empty'),
@@ -283,6 +286,14 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                         final selectedCategory = ref.watch(
                           selectCategoryStateProvider,
                         );
+                        final isAiCategory = selectedCategory == 'AI Generated';
+
+                        // Filter out "AI Generated" from the dropdown options
+                        final filteredCategories =
+                            categories
+                                .where((cat) => cat != 'AI Generated')
+                                .toList();
+
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
@@ -291,7 +302,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              value: selectedCategory,
+                              value: isAiCategory ? null : selectedCategory,
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: Colors.black,
@@ -301,7 +312,7 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                                 size: 20,
                               ),
                               items:
-                                  categories
+                                  filteredCategories
                                       .map(
                                         (cat) => DropdownMenuItem(
                                           value: cat,
@@ -309,15 +320,39 @@ class _AddNotesScreenState extends ConsumerState<AddNotesScreen> {
                                         ),
                                       )
                                       .toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  ref
-                                      .read(
-                                        selectCategoryStateProvider.notifier,
+                              onChanged:
+                                  isAiCategory
+                                      ? null // Disable dropdown if AI Generated
+                                      : (value) {
+                                        if (value != null) {
+                                          ref
+                                              .read(
+                                                selectCategoryStateProvider
+                                                    .notifier,
+                                              )
+                                              .update((state) => value);
+                                        }
+                                      },
+                              hint:
+                                  isAiCategory
+                                      ? Text(
+                                        'AI Generated',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
                                       )
-                                      .update((state) => value);
-                                }
-                              },
+                                      : null,
+                              disabledHint:
+                                  isAiCategory
+                                      ? Text(
+                                        'AI Generated',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                      : null,
                             ),
                           ),
                         );

@@ -83,7 +83,10 @@ class NotesCard extends ConsumerWidget {
                         child:
                             note.category == "AI Generated"
                                 ? MarkdownBody(
-                                  data: note.content!,
+                                  data: note.content!
+                                      .split(' ')
+                                      .take(12)
+                                      .join(' '),
                                   styleSheet: MarkdownStyleSheet.fromTheme(
                                     Theme.of(context),
                                   ).copyWith(
